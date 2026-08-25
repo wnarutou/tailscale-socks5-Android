@@ -75,6 +75,9 @@ jobs:
           go mod edit -replace tailscale.com=$TS_DIR
           echo "go.mod: tailscale.com -> $TS_DIR"
 
+      - name: Test mobile proxy settings
+        run: go test ./mobile
+
       - name: Build AAR
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
@@ -104,6 +107,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Verify Android service contracts
+        shell: pwsh
+        run: ./tests/first-round-contract.ps1
 
       - name: Setup JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4

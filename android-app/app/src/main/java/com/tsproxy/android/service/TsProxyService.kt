@@ -1,5 +1,6 @@
 package com.tsproxy.android.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -35,19 +36,28 @@ class TsProxyService : Service() {
                 stopProxy()
             }
         }
-        return START_STICKY
+        return START_REDELIVER_INTENT
     }
 
+    @SuppressLint("WakelockTimeout")
     private fun acquireWakeLock() {
+        if (wakeLock?.isHeld == true) {
+            TsProxyApp.appendLog("WakeLock already held")
+            return
+        }
+
         try {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             wakeLock = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "ts-proxy::keepalive"
-            )
-            wakeLock?.acquire(24 * 60 * 60 * 1000L) // 24 hours
-            TsProxyApp.appendLog("WakeLock acquired")
+            ).apply {
+                setReferenceCounted(false)
+                acquire()
+            }
+            TsProxyApp.appendLog("WakeLock acquired for service lifetime")
         } catch (e: Exception) {
+            wakeLock = null
             TsProxyApp.appendLog("WakeLock failed: ${e.message}")
         }
     }

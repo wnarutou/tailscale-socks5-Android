@@ -100,6 +100,12 @@ var (
 	localTZ  *time.Location
 )
 
+const (
+	mobileTCPTimeout = 0
+	mobileUDPTimeout = 0
+	mobileSocksDebug = true
+)
+
 type logBuffer struct {
 	mu   sync.Mutex
 	msgs []string
@@ -258,7 +264,13 @@ func bootServer(srv *tsnet.Server, socksAddr string) {
 	}()
 
 	logBuf.write("Step 2: Creating TsProxy (will wait for auth)...")
-	p, err := tsp.NewTsProxy(srv, 1100, 330, true)
+	logBuf.write(
+		"SOCKS settings: TCP timeout=%d UDP timeout=%d debug=%t (0=disabled)",
+		mobileTCPTimeout,
+		mobileUDPTimeout,
+		mobileSocksDebug,
+	)
+	p, err := tsp.NewTsProxy(srv, mobileTCPTimeout, mobileUDPTimeout, mobileSocksDebug)
 	if err != nil {
 		logBuf.write("NewTsProxy error: %v", err)
 		return

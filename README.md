@@ -24,6 +24,16 @@ Android 只能同时跑一个 VPN。Tailscale 占了 VPN slot，Clash 就没法�
 2. 打开 App，点「启动」，浏览器完成 Tailscale 授权
 3. 在 FlClash 添加覆写脚本（见下方）
 
+### 将 ts-proxy App 绕过 Clash VPN
+
+在 Clash、FlClash 或其他使用 Android `VpnService` 的客户端中，把 ts-proxy App 设置为“绕过 VPN”或“不经过 VPN”。本项目的 Android 包名是：
+
+```text
+com.tsproxy.android
+```
+
+这里只排除 ts-proxy App，不要排除需要访问 Tailnet 的业务 App。正确的数据路径是：业务 App → Clash TUN → `127.0.0.1:1080` → ts-proxy（绕过 Clash VPN）→ 物理网络。否则 ts-proxy 自身的 Tailscale control、DERP、STUN 和 WireGuard UDP 流量可能再次被 Clash 捕获，导致绕路、连接建立缓慢或递归代理。
+
 ## FlClash 覆写脚本
 
 第一步：工具 → 进阶配置 → 脚本 → 添加 → 粘贴：
