@@ -63,6 +63,8 @@ Assert-Matches $appBuild 'versionName\s*=\s*"1\.102\.3"' `
 $workflow = Read-Utf8 ".github/workflows/android.yml"
 Assert-Matches $workflow 'first-round-contract\.ps1' `
     "CI must run the first-round contract checks"
+Assert-Matches $workflow 'go test -mod=mod ./mobile' `
+    "CI must allow Linux-only module checksums while testing mobile"
 
 if ($failures.Count -gt 0) {
     $failures | ForEach-Object { Write-Error $_ -ErrorAction Continue }

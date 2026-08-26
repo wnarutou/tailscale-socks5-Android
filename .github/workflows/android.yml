@@ -76,7 +76,7 @@ jobs:
           echo "go.mod: tailscale.com -> $TS_DIR"
 
       - name: Test mobile proxy settings
-        run: go test ./mobile
+        run: go test -mod=mod ./mobile
 
       - name: Build AAR
         run: |
