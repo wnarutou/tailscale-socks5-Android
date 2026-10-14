@@ -133,6 +133,10 @@ jobs:
           gradle wrapper --gradle-version ${{ env.GRADLE_VERSION }}
           chmod +x gradlew
 
+      - name: Test tailnet node models
+        working-directory: android-app
+        run: ./gradlew testDebugUnitTest --no-daemon
+
       - name: Build debug APK
         working-directory: android-app
         run: ./gradlew assembleDebug --no-daemon

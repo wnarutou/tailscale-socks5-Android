@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(vm: MainViewModel = viewModel()) {
     val ui by vm.ui.collectAsStateWithLifecycle()
+    val nodesVm: NodesViewModel = viewModel()
     var showConfig by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
 
@@ -113,7 +114,7 @@ fun MainScreen(vm: MainViewModel = viewModel()) {
                         Text("启动")
                     }
                     Button(
-                        onClick = { vm.stopProxy() },
+                        onClick = { nodesVm.setRunning(false); vm.stopProxy() },
                         enabled = ui.running,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
@@ -179,6 +180,9 @@ fun MainScreen(vm: MainViewModel = viewModel()) {
             }
             Spacer(Modifier.height(12.dp))
         }
+
+        NodesSection(ui.running, nodesVm)
+        Spacer(Modifier.height(12.dp))
 
         // ts日志 — scrollable, newest first, with pause and copy
         val logLines = remember(ui.logs) {

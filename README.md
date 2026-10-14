@@ -18,6 +18,12 @@ Android 只能同时跑一个 VPN。Tailscale 占了 VPN slot，Clash 就没法�
 
 查看实时日志
 
+查看当前设备可见的 Tailscale 节点（包含离线节点），搜索设备名/IP/系统并复制 IPv4 或 IPv6 地址
+
+对节点执行 Tailscale DISCO Ping，显示 10 次探测的延迟、平均延迟以及直连/DERP/节点中继路径
+
+节点列表受 Tailnet 访问策略限制，可能与管理员后台的完整设备清单不同。在线状态表示节点连接到控制平面；Ping 成功也不代表目标业务端口一定可访问。关闭 Ping 弹窗、离开 App 或停止代理会取消探测。
+
 ## 安装
 
 1. 从 [Releases](../../releases) 下载最新 APK
