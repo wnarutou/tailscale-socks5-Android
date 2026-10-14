@@ -319,6 +319,7 @@ func GetLoginURL() string {
 
 func Stop() {
 	mu.Lock()
+	cancelPingsLocked()
 
 	if !running && server == nil {
 		mu.Unlock()
@@ -354,16 +355,19 @@ func IsRunning() bool {
 
 func GetTailscaleIP() string {
 	mu.Lock()
-	defer mu.Unlock()
-	if server == nil {
+	srv := server
+	mu.Unlock()
+	if srv == nil {
 		return ""
 	}
-	lc, err := server.LocalClient()
+	lc, err := srv.LocalClient()
 	if err != nil {
 		return ""
 	}
-	st, err := lc.Status(context.Background())
-	if err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	st, err := lc.Status(ctx)
+	if err != nil || st == nil || st.Self == nil {
 		return ""
 	}
 	for _, ip := range st.Self.TailscaleIPs {
